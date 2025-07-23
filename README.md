@@ -72,17 +72,17 @@ kubectl describe ingress task-planner-ingress
 
 
 ###4. Auto Restart
-   Application POD kill
-   kubectl get pods -l app=task-planner
-   kubectl delete pod <any-task-planner-pod-name>
-   kubectl get pods -l app=task-planner -w
+Application POD kill
+kubectl get pods -l app=task-planner
+kubectl delete pod <any-task-planner-pod-name>
+kubectl get pods -l app=task-planner -w
 
-   Rolling Update
-   kubectl set image deployment task-planner-deployment task-planner=shivamshivam01/task-planner:v2
-   kubectl rollout status deployment task-planner-deployment
-   kubectl get pods -l app=task-planner -w
+Rolling Update
+kubectl set image deployment task-planner-deployment task-planner=shivamshivam01/task-planner:v2
+kubectl rollout status deployment task-planner-deployment
+kubectl get pods -l app=task-planner -w
 
-   DB POD Kill
-   kubectl get pod -l app=mysql
-   kubectl delete pod mysql-0
-   kubectl get pods -l app=mysql -w
+DB POD Kill
+kubectl get pod -l app=mysql
+kubectl delete pod mysql-0
+kubectl get pods -l app=mysql -w
