@@ -12,8 +12,8 @@ import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-todo',
   imports: [FormsModule, FloatLabelModule, InputTextModule, InputGroupModule, InputGroupAddonModule, SelectModule, ButtonModule, IftaLabelModule],
-  templateUrl: './todo.html',
-  styleUrl: './todo.scss'
+  templateUrl: './todo.component.html',
+  styleUrl: './todo.component.scss'
 })
 export class TodoComponent implements OnInit {
   title: string = '';
