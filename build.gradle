@@ -30,22 +30,29 @@ node {
 	download = true
 }
 
-npmInstall {
-	workingDir = file('task-planner-ui')
-}
-
 tasks.register('buildAngular', NpmTask) {
 	dependsOn npmInstall
 	args = ['run', 'build']
-	inputs.files('task-planner-ui/package.json', 'task-planner-ui/angular.json')
-	//outputs.dir('task-planner-ui/dist')
-	workingDir = file('task-planner-ui')  // Add this line
+	workingDir = file('task-planner-ui')
 }
 
 
-tasks.register('copyAngularToStatic', Copy) {
-	from 'task-planner-ui/dist'
-	into 'src/main/resources/static'
+tasks.register('copyAngularToStatic') {
+	doFirst {
+		copy {
+			from 'task-planner-ui/browser/media'
+			into 'src/main/resources/static'
+		}
+		copy {
+			from 'src/main/resources/static/browser'
+			into 'src/main/resources/static'
+		}
+	}
+	doLast {
+		delete 'src/main/resources/static/browser'
+		delete 'src/main/resources/static/prerendered-routes.json'
+		delete 'src/main/resources/static/3rdpartylicenses.txt'
+	}
 	dependsOn buildAngular
 }
 
