@@ -1,5 +1,5 @@
 <section class="card grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
-    <p-table [value]="todos" class="mt-4">
+    <p-table [value]="(todos | async) || []" class="mt-4">
         <ng-template pTemplate="header">
             <h2>Pending To-Dos:</h2>
             <tr class="plex-400">

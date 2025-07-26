@@ -16,10 +16,10 @@ export class TodoService {
   pendingTodos$ = this.pendingTodosSubject.asObservable();
   doneTodos$ = this.doneTodosSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   addTodo(todo: Todo): Observable<Todo> {
-    return this.http.post<Todo>(this.apiUrl, todo).pipe(
+    return this.http.put<Todo>(`${this.apiUrl}/todo`, todo).pipe(
       map((createdTodo) => {
         this.refreshTodos();
         return createdTodo;
@@ -28,12 +28,23 @@ export class TodoService {
   }
 
   refreshTodos() {
+    console.log('Refreshing todos...');
+    this.refreshPendingTodos();
+    this.refreshFinishedTodos();
+  }
+
+  refreshPendingTodos() {
+    console.log('Refreshing pending todos...');
     this.getPendingTodos().subscribe();
+  }
+
+  refreshFinishedTodos() {
+    console.log('Refreshing Finished todos...');
     this.getDoneTodos().subscribe();
   }
 
   deleteTodo(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/todo/${id}`).pipe(
       map(() => {
         this.refreshTodos();
       })
@@ -41,7 +52,7 @@ export class TodoService {
   }
 
   updateTodo(todo: Todo): Observable<Todo> {
-    return this.http.put<Todo>(`${this.apiUrl}/${todo.id}`, todo).pipe(
+    return this.http.put<Todo>(`${this.apiUrl}/todo/${todo.id}`, todo).pipe(
       map((updatedTodo) => {
         this.refreshTodos();
         return updatedTodo;
@@ -52,6 +63,7 @@ export class TodoService {
   getPendingTodos(): Observable<Todo[]> {
     return this.http.get<Todo[]>(`${this.apiUrl}?completed=false`).pipe(
       map(todos => {
+        console.log('Getting pending todos...');
         this.pendingTodosSubject.next(todos);
         return todos;
       })
