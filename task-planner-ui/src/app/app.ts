@@ -1,12 +1,14 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { TodoComponent } from "./todo/todo";
+import { DoneComponent } from "./done/done";
+import { HeaderComponent } from "./header/header";
+import { PendingComponent } from './pending/pending';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [TodoComponent, DoneComponent, PendingComponent, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('task-planner-ui');
 }

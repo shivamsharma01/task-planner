@@ -1,0 +1,19 @@
+<section class="card grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+    <p-table [value]="todos" class="mt-4">
+        <ng-template pTemplate="header">
+            <h2>Pending To-Do:</h2>
+            <tr class="plex-400">
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Description</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-todo>
+            <tr>
+                <td>{{ todo.title }}</td>
+                <td>{{ todo.priority }}</td>
+                <td>{{ todo.description }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</section>

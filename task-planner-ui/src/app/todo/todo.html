@@ -1,0 +1,20 @@
+<section class="card grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+    <h2>Add To-Do:</h2>
+    <p-iftalabel>
+        <input pInputText id="title" [(ngModel)]="title" [invalid]="!title" />
+        <label for="title" class="playwrite-hu-400">Todo Title</label>
+    </p-iftalabel>
+    <p-inputgroup>
+        <p-inputgroup-addon>
+            <i class="pi pi-map"></i>
+        </p-inputgroup-addon>
+        <p-select [(ngModel)]="selectedPriority" [options]="priorityOptions" optionLabel="priority"
+            optionValue="priority" placeholder="Priority"></p-select>
+    </p-inputgroup>
+    <p-floatlabel>
+        <textarea pInputTextarea id="description" [(ngModel)]="description" rows="3"></textarea>
+        <label for="description" class="playwrite-hu-400">Description (optional)</label>
+    </p-floatlabel>
+    <p-button pButton type="button" label="Save" (click)="addTodo()" class="mt-3"><i class="pi pi-check"></i></p-button>
+    <p-button pButton type="button" label="Reset" (click)="reset()" class="mt-3"><i class="pi pi-times"></i></p-button>
+</section>
