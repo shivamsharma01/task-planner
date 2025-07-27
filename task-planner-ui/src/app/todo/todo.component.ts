@@ -43,12 +43,14 @@ export class TodoComponent implements OnInit {
       description: this.description
     };
     this.todoService.addTodo(newTodo).subscribe(
-      (todo) => {
-        console.log('Todo added:', todo);
-        this.reset();
-      },
-      (error) => {
-        console.error('Error adding todo:', error);
+      {
+        next: (todo) => {
+          console.log('Todo added:', todo);
+          this.reset();
+        },
+        error: (error) => {
+          console.error('Error adding todo:', error);
+        }
       }
     );
   }

@@ -24,4 +24,26 @@ export class PendingComponent {
     this.todoService.refreshPendingTodos();
   }
 
+  removeTodo(id: number): void {
+    this.todoService.deleteTodo(id).subscribe({
+      next: () => {
+        console.log(`Todo with id ${id} deleted successfully.`);
+      },
+      error: (error) => {
+        console.error(`Error deleting todo with id ${id}:`, error);
+      }
+    });
+  }
+
+  finishTodo(id: number): void {
+    this.todoService.finishTodo(id).subscribe({
+      next: () => {
+        console.log(`Todo with id ${id} finished successfully.`);
+      },
+      error: (error) => {
+        console.error(`Error finishing todo with id ${id}:`, error);
+      }
+    });
+  }
+
 }

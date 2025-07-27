@@ -28,19 +28,18 @@ public class ToDoController {
         }
     }
 
-    @PostMapping("/todo/{id}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable long id, @Valid @RequestBody Todo todo) throws InvalidTodoException, NotFoundTodoException {
-        todo.setId(id);
-        return ResponseEntity.ok(todoService.updateTodo(todo));
+    @PutMapping("/todo/add")
+    public ResponseEntity<Todo> addTodo(@Valid @RequestBody Todo todo) throws InvalidTodoException {
+        return ResponseEntity.ok(todoService.addTodo(todo));
     }
 
-    @PutMapping("/todo")
-    public ResponseEntity<Todo> saveTodo(@Valid @RequestBody Todo todo) throws InvalidTodoException {
-        return ResponseEntity.ok(todoService.saveTodo(todo));
-    }
-
-    @DeleteMapping("/todo/{id}")
+    @DeleteMapping("/todo/{id}/delete")
     public ResponseEntity<Boolean> deleteTodo(@PathVariable long id) {
         return ResponseEntity.ok(todoService.deleteTodo(id));
+    }
+
+    @GetMapping("/todo/{id}/finish")
+    public ResponseEntity<Boolean> finishTodo(@PathVariable long id) {
+        return ResponseEntity.ok(todoService.finishTodo(id));
     }
 }

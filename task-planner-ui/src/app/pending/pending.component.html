@@ -6,6 +6,8 @@
                 <th>Title</th>
                 <th>Priority</th>
                 <th>Description</th>
+                <th>Remove</th>
+                <th>Finish</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-todo>
@@ -13,6 +15,8 @@
                 <td>{{ todo.title }}</td>
                 <td>{{ todo.priority }}</td>
                 <td>{{ todo.description }}</td>
+                <td><i class="pi pi-times btn-click red" (click)="removeTodo(todo.id)"></i></td>
+                <td><i class="pi pi-check btn-click green" (click)="finishTodo(todo.id)"></i></td>
             </tr>
         </ng-template>
     </p-table>

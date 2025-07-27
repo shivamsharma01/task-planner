@@ -1,7 +1,19 @@
 <section class="card grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
-    <h2>Finished To-Dos:</h2>
-    <div>
-        <p>Go Running</p>
-        <p>Finish K8s Assignment</p>
-    </div>
+    <p-table [value]="(todos | async) || []" class="mt-4">
+        <ng-template pTemplate="header">
+            <h2>Finished To-Dos:</h2>
+            <tr class="plex-400">
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Description</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-todo>
+            <tr>
+                <td>{{ todo.title }}</td>
+                <td>{{ todo.priority }}</td>
+                <td>{{ todo.description }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
 </section>

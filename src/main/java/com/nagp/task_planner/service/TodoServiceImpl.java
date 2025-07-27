@@ -47,33 +47,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Todo updateTodo(Todo todo) throws InvalidTodoException, NotFoundTodoException {
-        if (isValid(todo)) {
-            throw new InvalidTodoException("Invalid input: title is missing");
-        }
-        long id = todo.getId();
-        Optional<TodoEntity> todoEntityOptional = todoRepository.findById(id);
-        if (todoEntityOptional.isEmpty()) {
-            throw new NotFoundTodoException("Todo with id "+id+" not found");
-        }
-        TodoEntity entity = todoEntityOptional.get();
-        if (StringUtils.hasText(todo.getTitle())) {
-            entity.setTitle(todo.getTitle().trim());
-        }
-        if (StringUtils.hasText(todo.getPriority())) {
-            entity.setPriority(todo.getPriority().trim());
-        }
-        if (StringUtils.hasText(todo.getTitle())) {
-            entity.setDescription(todo.getDescription().trim());
-        }
-        entity.setCompleted(todo.getCompleted());
-        entity.setCreatedAt(todo.getCreatedAt());
-        entity.setUpdatedAt(LocalDateTime.now());
-        return todoEntityToDto(todoRepository.save(entity));
-    }
-
-    @Override
-    public Todo saveTodo(Todo todo) throws InvalidTodoException {
+    public Todo addTodo(Todo todo) throws InvalidTodoException {
         if (isValid(todo)) {
             throw new InvalidTodoException("Invalid input: title is missing");
         }
@@ -98,5 +72,16 @@ public class TodoServiceImpl implements TodoService {
             return !todoRepository.existsById(id);
         }
         return false;
+    }
+
+    @Override
+    public Boolean finishTodo(long id) {
+        Optional<TodoEntity> todoEntityOptional = todoRepository.findById(id);
+        if (todoEntityOptional.isEmpty()) return false;
+        TodoEntity todoEntity = todoEntityOptional.get();
+        todoEntity.setCompleted(true);
+        todoEntity.setUpdatedAt(LocalDateTime.now());
+        todoRepository.save(todoEntity);
+        return true;
     }
 }
