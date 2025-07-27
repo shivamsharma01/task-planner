@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mysql-init-job
+  namespace: task-planner
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - name: mysql-init
+          image: mysql:8.0
+          env:
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_ROOT_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: task-planner-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_TODO_DB_NAME
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_TODO_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: task-planner-secret
+                  key: MYSQL_TODO_PASSWORD
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for MySQL to be ready..."
+              until mysqladmin ping -h mysql --silent; do sleep 2; done;
+              echo "Substituting env vars into init SQL..."
+              envsubst < /init/init-db-template.sql > /init/init-db.sql;
+              echo "Running init script..."
+              mysql -h mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" < /init/init-db.sql;
+          volumeMounts:
+            - name: init-script
+              mountPath: /init
+      restartPolicy: OnFailure
+      volumes:
+        - name: init-script
+          configMap:
+            name: mysql-init-script-configmap

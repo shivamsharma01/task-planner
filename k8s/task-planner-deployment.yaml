@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-planner-deployment
+  namespace: task-planner
+  labels:
+    app: task-planner
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: task-planner
+  template:
+    metadata:
+      labels:
+        app: task-planner
+      namespace: task-planner
+    spec:
+      containers:
+        - name: task-planner
+          image: shivamshivam01/task-planner:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_HOST
+            - name: MYSQL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_PORT
+            - name: MYSQL_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_TODO_DB_NAME
+            - name: MYSQL_URL
+              value: "jdbc:mysql://$(MYSQL_HOST):$(MYSQL_PORT)/$(MYSQL_DB_NAME)"
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_TODO_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: task-planner-secret
+                  key: MYSQL_TODO_PASSWORD
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-planner-service
+  namespace: task-planner
+spec:
+  selector:
+    app: task-planner
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

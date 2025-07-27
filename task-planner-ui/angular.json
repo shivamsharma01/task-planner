@@ -46,8 +46,7 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "outputPath": "../src/main/resources/static"
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,

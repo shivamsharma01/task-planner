@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script-configmap
+  namespace: task-planner
+data:
+  init-db-template.sql: |
+    CREATE DATABASE IF NOT EXISTS ${DB_NAME};
+    
+    CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+    GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
+    FLUSH PRIVILEGES;
+    
+    USE ${DB_NAME};
+    
+    CREATE TABLE IF NOT EXISTS todo (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR(255) NOT NULL,
+        priority VARCHAR(50),
+        description TEXT,
+        completed BOOLEAN DEFAULT FALSE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );

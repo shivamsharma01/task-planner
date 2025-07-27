@@ -37,27 +37,18 @@ tasks.register('buildAngular', NpmTask) {
 }
 
 
-tasks.register('copyAngularToStatic') {
-	doFirst {
-		copy {
-			from 'task-planner-ui/browser/media'
-			into 'src/main/resources/static'
-		}
-		copy {
-			from 'src/main/resources/static/browser'
-			into 'src/main/resources/static'
-		}
-	}
-	doLast {
-		delete 'src/main/resources/static/browser'
-		delete 'src/main/resources/static/prerendered-routes.json'
-		delete 'src/main/resources/static/3rdpartylicenses.txt'
-	}
+tasks.register('copyAngularAssets', Copy) {
+	from 'task-planner-ui/dist/task-planner-ui/browser'
+	into 'src/main/resources/static'
 	dependsOn buildAngular
+
+	doLast {
+		delete 'task-planner-ui/dist'
+	}
 }
 
 processResources {
-	dependsOn copyAngularToStatic
+	dependsOn copyAngularAssets
 }
 
 dependencies {
