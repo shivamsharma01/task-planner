@@ -4,7 +4,7 @@ metadata:
   name: task-planner-configmap
   namespace: task-planner
 data:
-  MYSQL_HOST: "localhost"
+  MYSQL_HOST: "mysql-0.mysql.task-planner.svc.cluster.local"
   MYSQL_PORT: "3306"
   MYSQL_ROOT_USER: "root"
   MYSQL_TODO_DB_NAME: "todo_db"

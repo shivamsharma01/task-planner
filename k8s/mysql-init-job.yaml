@@ -4,13 +4,18 @@ metadata:
   name: mysql-init-job
   namespace: task-planner
 spec:
-  backoffLimit: 1
+  backoffLimit: 3
   template:
     spec:
       containers:
         - name: mysql-init
-          image: mysql:8.0
+          image: mysql:8.0.43
           env:
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: task-planner-configmap
+                  key: MYSQL_HOST
             - name: MYSQL_USER
               valueFrom:
                 configMapKeyRef:
@@ -37,20 +42,35 @@ spec:
                   name: task-planner-secret
                   key: MYSQL_TODO_PASSWORD
           command:
-            - /bin/sh
+            - /bin/bash
             - -c
             - |
-              echo "Waiting for MySQL to be ready..."
-              until mysqladmin ping -h mysql --silent; do sleep 2; done;
-              echo "Substituting env vars into init SQL..."
-              envsubst < /init/init-db-template.sql > /init/init-db.sql;
-              echo "Running init script..."
-              mysql -h mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" < /init/init-db.sql;
-          volumeMounts:
-            - name: init-script
-              mountPath: /init
+              echo "Waiting for MySQL DNS to be resolvable..."
+              until getent hosts mysql-0.mysql.task-planner.svc.cluster.local; do
+                echo "Waiting for DNS to resolve..."
+                sleep 5
+              done
+
+              echo "DNS resolved. Waiting for MySQL to accept connections..."
+              until mysqladmin ping -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
+                echo "Waiting for MySQL to be ready..."
+                sleep 5
+              done
+              echo "MySQL is ready! Running init scripts..."
+              mysql -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" <<EOF
+              CREATE DATABASE IF NOT EXISTS ${DB_NAME};
+              CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+              GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
+              FLUSH PRIVILEGES;
+              USE ${DB_NAME};
+              CREATE TABLE IF NOT EXISTS todo (
+              id BIGINT PRIMARY KEY AUTO_INCREMENT,
+              title VARCHAR(255) NOT NULL,
+              priority VARCHAR(50),
+              description TEXT,
+              completed BOOLEAN DEFAULT FALSE,
+              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+              updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+              );
+              EOF
       restartPolicy: OnFailure
-      volumes:
-        - name: init-script
-          configMap:
-            name: mysql-init-script-configmap
