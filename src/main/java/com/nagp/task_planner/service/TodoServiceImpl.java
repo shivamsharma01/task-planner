@@ -3,7 +3,6 @@ package com.nagp.task_planner.service;
 import com.nagp.task_planner.dto.Todo;
 import com.nagp.task_planner.entity.TodoEntity;
 import com.nagp.task_planner.exception.InvalidTodoException;
-import com.nagp.task_planner.exception.NotFoundTodoException;
 import com.nagp.task_planner.repository.TodoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

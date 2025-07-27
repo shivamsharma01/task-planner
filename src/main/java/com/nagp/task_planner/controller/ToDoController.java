@@ -2,7 +2,6 @@ package com.nagp.task_planner.controller;
 
 import com.nagp.task_planner.dto.Todo;
 import com.nagp.task_planner.exception.InvalidTodoException;
-import com.nagp.task_planner.exception.NotFoundTodoException;
 import com.nagp.task_planner.service.TodoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
