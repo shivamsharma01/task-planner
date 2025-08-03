@@ -4,10 +4,10 @@ metadata:
   name: task-planner-ingress
   namespace: task-planner
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "nginx"
 spec:
   rules:
-    - host: task-planner.com
+    - host: <ip>.nip.io
       http:
         paths:
           - path: /

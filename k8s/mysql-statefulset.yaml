@@ -57,6 +57,7 @@ spec:
         name: mysql-data
         namespace: task-planner
       spec:
+        storageClassName: standard-rwo
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
