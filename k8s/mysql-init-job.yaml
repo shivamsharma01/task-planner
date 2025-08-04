@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: mysql-init-job
-  namespace: task-planner
 spec:
   backoffLimit: 3
   template:
@@ -41,6 +40,9 @@ spec:
                 secretKeyRef:
                   name: task-planner-secret
                   key: MYSQL_TODO_PASSWORD
+          volumeMounts:
+            - name: init-sql
+              mountPath: /init
           command:
             - /bin/bash
             - -c
@@ -57,20 +59,10 @@ spec:
                 sleep 5
               done
               echo "MySQL is ready! Running init scripts..."
-              mysql -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" <<EOF
-              CREATE DATABASE IF NOT EXISTS ${DB_NAME};
-              CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
-              GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
-              FLUSH PRIVILEGES;
-              USE ${DB_NAME};
-              CREATE TABLE IF NOT EXISTS todo (
-              id BIGINT PRIMARY KEY AUTO_INCREMENT,
-              title VARCHAR(255) NOT NULL,
-              priority VARCHAR(50),
-              description TEXT,
-              completed BOOLEAN DEFAULT FALSE,
-              created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-              updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-              );
-              EOF
+              envsubst < /init/init-db-template.sql | mysql -h "$MYSQL_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD"
+              echo "init scripts run step is completed..."
       restartPolicy: OnFailure
+      volumes:
+        - name: init-sql
+          configMap:
+            name: mysql-init-script-configmap
