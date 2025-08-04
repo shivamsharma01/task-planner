@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: task-planner-configmap
 data:
-  MYSQL_HOST: "mysql-0.mysql.task-planner.svc.cluster.local"
+  MYSQL_HOST: "mysql-0.mysql.default.svc.cluster.local"
   MYSQL_PORT: "3306"
   MYSQL_ROOT_USER: "root"
   MYSQL_TODO_DB_NAME: "todo_db"
